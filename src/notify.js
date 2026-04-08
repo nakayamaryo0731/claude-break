@@ -14,7 +14,7 @@ export function sendNotification(subtitle, message) {
     try {
       execFileSync("osascript", [
         "-e",
-        `display notification "${message}" with title "${title}" subtitle "${subtitle}" sound name "Glass"`,
+        `display notification "${message}" with title "${title}" subtitle "${subtitle}"`,
       ], { stdio: "ignore" });
     } catch {
       // ignore errors
