@@ -17,7 +17,7 @@ const DEFAULT_CONFIG = {
   say: false,
   activities: DEFAULT_ACTIVITIES,
   // Notification timing: seconds after start
-  timings: [5],
+  timings: [10],
   intervalSec: 30, // after initial notification, repeat every N seconds
 };
 
