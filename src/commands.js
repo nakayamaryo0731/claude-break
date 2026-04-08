@@ -19,12 +19,12 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
- * cc-fit init: Set up hooks in Claude Code settings and create default config.
+ * claude-break init: Set up hooks in Claude Code settings and create default config.
  */
 export function cmdInit() {
   // 1. Create default config
   const config = initConfig();
-  console.log(`[cc-fit] Config created at ${paths.CONFIG_PATH}`);
+  console.log(`[claude-break] Config created at ${paths.CONFIG_PATH}`);
 
   // 2. Inject hooks into Claude Code settings
   const claudeSettingsPath = join(homedir(), ".claude", "settings.json");
@@ -33,7 +33,7 @@ export function cmdInit() {
     try {
       settings = JSON.parse(readFileSync(claudeSettingsPath, "utf-8"));
     } catch {
-      console.error("[cc-fit] Warning: Could not parse existing Claude settings. Creating new.");
+      console.error("[claude-break] Warning: Could not parse existing Claude settings. Creating new.");
     }
   }
 
@@ -41,24 +41,24 @@ export function cmdInit() {
 
   const ccFitHooks = {
     UserPromptSubmit: [
-      { hooks: [{ type: "command", command: "cc-fit start", async: true }] },
+      { hooks: [{ type: "command", command: "claude-break start", async: true }] },
     ],
     Stop: [
-      { hooks: [{ type: "command", command: "cc-fit stop --reason=completed", async: true }] },
+      { hooks: [{ type: "command", command: "claude-break stop --reason=completed", async: true }] },
     ],
     Notification: [
-      { hooks: [{ type: "command", command: "cc-fit stop --reason=needs-input", async: true }] },
+      { hooks: [{ type: "command", command: "claude-break stop --reason=needs-input", async: true }] },
     ],
   };
 
-  // Merge: add cc-fit hooks without removing existing hooks
+  // Merge: add claude-break hooks without removing existing hooks
   for (const [event, hookEntries] of Object.entries(ccFitHooks)) {
     if (!settings.hooks[event]) {
       settings.hooks[event] = hookEntries;
     } else {
-      // Check if cc-fit hook already exists
+      // Check if claude-break hook already exists
       const hasCcFit = settings.hooks[event].some((entry) =>
-        entry.hooks?.some((h) => h.command?.startsWith("cc-fit"))
+        entry.hooks?.some((h) => h.command?.startsWith("claude-break"))
       );
       if (!hasCcFit) {
         settings.hooks[event].push(...hookEntries);
@@ -73,12 +73,12 @@ export function cmdInit() {
   }
 
   writeFileSync(claudeSettingsPath, JSON.stringify(settings, null, 2) + "\n");
-  console.log(`[cc-fit] Hooks added to ${claudeSettingsPath}`);
-  console.log("[cc-fit] Setup complete! cc-fit will now run during Claude Code tasks.");
+  console.log(`[claude-break] Hooks added to ${claudeSettingsPath}`);
+  console.log("[claude-break] Setup complete! claude-break will now run during Claude Code tasks.");
 }
 
 /**
- * cc-fit start: Kill existing timer if any, then spawn a detached timer worker.
+ * claude-break start: Kill existing timer if any, then spawn a detached timer worker.
  */
 export function cmdStart() {
   const config = loadConfig();
@@ -112,7 +112,7 @@ export function cmdStart() {
 }
 
 /**
- * cc-fit stop: Write a pending stop marker. The timer worker handles debounce.
+ * claude-break stop: Write a pending stop marker. The timer worker handles debounce.
  * This command exits immediately — no setTimeout needed.
  */
 export function cmdStop(reason) {
@@ -120,7 +120,7 @@ export function cmdStop(reason) {
 }
 
 /**
- * cc-fit config: Show current config.
+ * claude-break config: Show current config.
  */
 export function cmdConfig() {
   const config = loadConfig();
@@ -128,7 +128,7 @@ export function cmdConfig() {
 }
 
 /**
- * cc-fit categories: List available activity categories.
+ * claude-break categories: List available activity categories.
  */
 export function cmdCategories() {
   const config = loadConfig();
@@ -142,13 +142,13 @@ export function cmdCategories() {
 }
 
 /**
- * cc-fit disable: Disable notifications.
+ * claude-break disable: Disable notifications.
  */
 export function cmdDisable() {
   const config = loadConfig();
   config.enabled = false;
   saveConfig(config);
-  console.log("[cc-fit] Disabled. Run `cc-fit enable` to re-enable.");
+  console.log("[claude-break] Disabled. Run `claude-break enable` to re-enable.");
 
   // Also kill running timer
   const pid = loadPid();
@@ -159,22 +159,22 @@ export function cmdDisable() {
 }
 
 /**
- * cc-fit enable: Enable notifications.
+ * claude-break enable: Enable notifications.
  */
 export function cmdEnable() {
   const config = loadConfig();
   config.enabled = true;
   saveConfig(config);
-  console.log("[cc-fit] Enabled.");
+  console.log("[claude-break] Enabled.");
 }
 
 /**
- * cc-fit uninstall: Remove hooks from Claude Code settings.
+ * claude-break uninstall: Remove hooks from Claude Code settings.
  */
 export function cmdUninstall() {
   const claudeSettingsPath = join(homedir(), ".claude", "settings.json");
   if (!existsSync(claudeSettingsPath)) {
-    console.log("[cc-fit] No Claude settings found.");
+    console.log("[claude-break] No Claude settings found.");
     return;
   }
 
@@ -182,14 +182,14 @@ export function cmdUninstall() {
   try {
     settings = JSON.parse(readFileSync(claudeSettingsPath, "utf-8"));
   } catch {
-    console.log("[cc-fit] Could not parse Claude settings.");
+    console.log("[claude-break] Could not parse Claude settings.");
     return;
   }
 
   if (settings.hooks) {
     for (const event of Object.keys(settings.hooks)) {
       settings.hooks[event] = settings.hooks[event].filter(
-        (entry) => !entry.hooks?.some((h) => h.command?.startsWith("cc-fit"))
+        (entry) => !entry.hooks?.some((h) => h.command?.startsWith("claude-break"))
       );
       if (settings.hooks[event].length === 0) {
         delete settings.hooks[event];
@@ -201,7 +201,7 @@ export function cmdUninstall() {
   }
 
   writeFileSync(claudeSettingsPath, JSON.stringify(settings, null, 2) + "\n");
-  console.log("[cc-fit] Hooks removed from Claude Code settings.");
+  console.log("[claude-break] Hooks removed from Claude Code settings.");
 
   // Kill running timer
   const pid = loadPid();

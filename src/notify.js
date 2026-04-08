@@ -3,22 +3,25 @@ import { platform } from "node:os";
 
 /**
  * Send a desktop notification.
- * Uses osascript on macOS for reliable delivery from detached processes.
+ * title: "Claude Break"
+ * subtitle: category label (e.g. "Exercise")
+ * message: activity text
  */
-export function sendNotification(title, message) {
+export function sendNotification(subtitle, message) {
+  const title = "Claude Break";
   const os = platform();
   if (os === "darwin") {
     try {
       execFileSync("osascript", [
         "-e",
-        `display notification "${message}" with title "${title}" sound name "Glass"`,
+        `display notification "${message}" with title "${title}" subtitle "${subtitle}" sound name "Glass"`,
       ], { stdio: "ignore" });
     } catch {
       // ignore errors
     }
   } else if (os === "linux") {
     try {
-      execFileSync("notify-send", [title, message], { stdio: "ignore" });
+      execFileSync("notify-send", [`${title} — ${subtitle}`, message], { stdio: "ignore" });
     } catch {
       // notify-send may not be installed
     }
@@ -30,7 +33,7 @@ export function sendNotification(title, message) {
         `$n = New-Object System.Windows.Forms.NotifyIcon; ` +
         `$n.Icon = [System.Drawing.SystemIcons]::Information; ` +
         `$n.Visible = $true; ` +
-        `$n.ShowBalloonTip(5000, '${title}', '${message}', 'Info');`,
+        `$n.ShowBalloonTip(5000, '${title} - ${subtitle}', '${message}', 'Info');`,
       ], { stdio: "ignore" });
     } catch {
       // ignore errors

@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { DEFAULT_ACTIVITIES } from "./activities.js";
 
-const CC_FIT_DIR = join(homedir(), ".cc-fit");
+const CC_FIT_DIR = join(homedir(), ".claude-break");
 const CONFIG_PATH = join(CC_FIT_DIR, "config.json");
 const STATE_PATH = join(CC_FIT_DIR, "state.json");
 const PID_PATH = join(CC_FIT_DIR, "timer.pid");

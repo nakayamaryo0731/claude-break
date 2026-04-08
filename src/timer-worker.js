@@ -25,7 +25,18 @@ if (!state.startedAt) {
 }
 
 let lastCategory = state.lastCategory;
-let nextNotificationSec = firstDelaySec;
+
+// Calculate next notification time, skipping past any elapsed time
+const elapsedAtStart = Math.floor((Date.now() - state.startedAt) / 1000);
+let nextNotificationSec;
+if (elapsedAtStart < firstDelaySec) {
+  nextNotificationSec = firstDelaySec;
+} else {
+  // Already past first delay — schedule next from now
+  const sinceFirst = elapsedAtStart - firstDelaySec;
+  const intervals = Math.ceil(sinceFirst / intervalSec);
+  nextNotificationSec = firstDelaySec + intervals * intervalSec;
+}
 
 function notify() {
   const elapsedSec = Math.floor((Date.now() - state.startedAt) / 1000);
@@ -33,7 +44,7 @@ function notify() {
 
   if (result) {
     const { category, label, activity } = result;
-    sendNotification(`cc-fit: ${label}`, activity);
+    sendNotification(label, activity);
     appendLog({ category, activity });
 
     if (config.say) {

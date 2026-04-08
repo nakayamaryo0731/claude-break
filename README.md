@@ -1,4 +1,4 @@
-# cc-fit
+# Claude Break
 
 > Claude works. You get healthy.
 
@@ -8,24 +8,24 @@ Zero dependencies. Works on macOS, Linux, and Windows.
 
 ![demo](assets/demo.gif)
 
-## Why cc-fit?
+## Why Claude Break?
 
 - Claude Code tasks can take seconds to minutes — you're just staring at the terminal
 - Sitting too long, not drinking water, skipping movement — **the classic engineer health trap**
-- cc-fit turns AI wait time into body maintenance time
+- Claude Break turns AI wait time into body maintenance time
 
 ## Setup
 
 ```bash
-npm install -g cc-fit
-cc-fit init
+npm install -g claude-break
+claude-break init
 ```
 
 That's it. Claude Code hooks are configured automatically.
 
 ## How it works
 
-After setup, cc-fit runs automatically:
+After setup, Claude Break runs automatically:
 
 1. You send a prompt to Claude Code
 2. After 10 seconds, a desktop notification suggests an activity
@@ -35,12 +35,12 @@ After setup, cc-fit runs automatically:
 ### Default activities
 
 ```
-$ cc-fit categories
+$ claude-break categories
 
 [Stretch] (stretch)
   - Shoulder rolls x10
-  - Neck stretch (10s each side)
-  - Reach for the sky and hold 10s
+  - Neck stretch, 10s each side
+  - Reach up and hold for 10s
   ...
 
 [Exercise] (exercise)
@@ -54,15 +54,15 @@ $ cc-fit categories
   ...
 
 [Eyes] (eyes)
-  - Look out the window for 20s (20-20-20 rule)
+  - Look out the window for 20s
   ...
 
 [Breathing] (breathing)
-  - 3 deep breaths
+  - Take 3 deep breaths
   ...
 
 [Posture] (posture)
-  - Sit up straight, reset your posture
+  - Sit up straight
   ...
 ```
 
@@ -70,16 +70,16 @@ $ cc-fit categories
 
 | Command | Description |
 |---|---|
-| `cc-fit init` | Set up Claude Code hooks automatically |
-| `cc-fit config` | Show current configuration |
-| `cc-fit categories` | List activity categories |
-| `cc-fit disable` | Temporarily disable notifications |
-| `cc-fit enable` | Re-enable notifications |
-| `cc-fit uninstall` | Remove hooks from Claude Code settings |
+| `claude-break init` | Set up Claude Code hooks automatically |
+| `claude-break config` | Show current configuration |
+| `claude-break categories` | List activity categories |
+| `claude-break disable` | Temporarily disable notifications |
+| `claude-break enable` | Re-enable notifications |
+| `claude-break uninstall` | Remove hooks from Claude Code settings |
 
 ## Configuration
 
-Config file: `~/.cc-fit/config.json`
+Config file: `~/.claude-break/config.json`
 
 ```json
 {
@@ -111,7 +111,7 @@ When enabled, activities are read aloud alongside the desktop notification.
 
 ## Architecture
 
-cc-fit uses Claude Code [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks):
+Claude Break uses Claude Code [Hooks](https://docs.anthropic.com/en/docs/claude-code/hooks):
 
 - `UserPromptSubmit` — starts the timer when you send a prompt
 - `Stop` — stops the timer when Claude finishes (with 5s debounce)
@@ -129,7 +129,7 @@ The timer runs as a detached background process — zero impact on Claude Code p
 
 ## Activity log
 
-All notifications are logged to `~/.cc-fit/log.jsonl`:
+All notifications are logged to `~/.claude-break/log.jsonl`:
 
 ```jsonl
 {"timestamp":"2026-04-08T00:21:00.331Z","category":"exercise","activity":"Squats x10"}
