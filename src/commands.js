@@ -2,7 +2,7 @@ import { readFileSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import {
   initConfig,
   loadConfig,
@@ -86,16 +86,16 @@ export function cmdStart() {
     return;
   }
 
-  // Kill existing timer process (SIGKILL to ensure immediate death)
-  const existingPid = loadPid();
-  if (existingPid) {
-    try {
-      process.kill(existingPid, "SIGKILL");
-    } catch {
-      // Process already dead
+  // Kill ALL existing timer-worker processes (not just the one in PID file)
+  try {
+    const result = execFileSync("pgrep", ["-f", "timer-worker.js"], { encoding: "utf-8" });
+    for (const pid of result.trim().split("\n")) {
+      try { process.kill(parseInt(pid, 10), "SIGKILL"); } catch {}
     }
-    clearPid();
+  } catch {
+    // No matching processes
   }
+  clearPid();
 
   // Preserve start time from previous timer (don't reset elapsed time)
   // Clear pendingStop to cancel any debounced stop
