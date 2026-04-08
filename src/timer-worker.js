@@ -12,6 +12,7 @@ const config = loadConfig();
 if (!config.enabled) process.exit(0);
 
 const debounceSec = config.debounceSec ?? 5;
+const maxLifetimeSec = config.maxLifetimeSec ?? 600; // 10 minutes max
 const firstDelaySec = (config.timings ?? [5])[0];
 const intervalSec = config.intervalSec ?? 30;
 
@@ -71,7 +72,16 @@ function checkPendingStop() {
   }
 }
 
+const workerStartedAt = Date.now();
+
 function mainLoop() {
+  // Auto-exit after max lifetime (safety net if stop never fires)
+  const workerAge = (Date.now() - workerStartedAt) / 1000;
+  if (workerAge >= maxLifetimeSec) {
+    clearPid();
+    process.exit(0);
+  }
+
   checkPendingStop();
 
   // Don't notify while a stop is pending (Claude likely finished, user is interacting)

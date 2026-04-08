@@ -86,14 +86,15 @@ export function cmdStart() {
     return;
   }
 
-  // Kill existing timer process
+  // Kill existing timer process (SIGKILL to ensure immediate death)
   const existingPid = loadPid();
   if (existingPid) {
     try {
-      process.kill(existingPid, "SIGTERM");
+      process.kill(existingPid, "SIGKILL");
     } catch {
       // Process already dead
     }
+    clearPid();
   }
 
   // Preserve start time from previous timer (don't reset elapsed time)
